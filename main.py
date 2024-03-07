@@ -12,7 +12,7 @@ class Window:
     def redraw(self):
         self.__root.update_idletasks()
         self.__root.update()
-    
+
     def wait_for_close(self):
         self.running = True
         while self.running:
@@ -51,19 +51,25 @@ class Cell:
         self._win = window
 
     def draw(self):
-        # canvas draw lines and stuff
+        if self.has_left_wall:
+            line = Line(Point(self._x1, self._y1), Point(self._x1, self._y2))
+            self._win.draw_line(line, "black")
+        if self.has_right_wall:
+            line = Line(Point(self._x2, self._y1), Point(self._x2, self._y2))
+            self._win.draw_line(line, "black")
+        if self.has_top_wall:
+            line = Line(Point(self._x1, self._y1), Point(self._x2, self._y1))
+            self._win.draw_line(line, "black")
+        if self.has_bottom_wall:
+            line = Line(Point(self._x1, self._y2), Point(self._x2, self._y2))
+            self._win.draw_line(line, "black")
 
 def main():
     win = Window(800, 600)
     p1 = Point(20,20)
-    p2 = Point(70,70)
-    p3 = Point(80,10)
-    p4 = Point(90,150)
-    l1 = Line(p1, p2)
-    l2 = Line(p3, p4)
-
-    win.draw_line(l1, "black")
-    win.draw_line(l2, "red")
+    p2 = Point(40,40)
+    c1 = Cell(p1, p2, win)
+    c1.draw()
 
     win.wait_for_close()
 
