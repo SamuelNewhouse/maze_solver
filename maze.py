@@ -54,18 +54,26 @@ class Cell:
     def draw(self):
         if not self._win:
             return
-        if self.has_left_wall:
-            line = Line(Point(self._x1, self._y1), Point(self._x1, self._y2))
-            self._win.draw_line(line, "black")
-        if self.has_right_wall:
-            line = Line(Point(self._x2, self._y1), Point(self._x2, self._y2))
-            self._win.draw_line(line, "black")
-        if self.has_top_wall:
-            line = Line(Point(self._x1, self._y1), Point(self._x2, self._y1))
-            self._win.draw_line(line, "black")
-        if self.has_bottom_wall:
-            line = Line(Point(self._x1, self._y2), Point(self._x2, self._y2))
-            self._win.draw_line(line, "black")
+
+        # left wall
+        line = Line(Point(self._x1, self._y1), Point(self._x1, self._y2))
+        color = "black" if self.has_left_wall else "white"
+        self._win.draw_line(line, color)
+
+        # right wall
+        line = Line(Point(self._x2, self._y1), Point(self._x2, self._y2))
+        color = "black" if self.has_right_wall else "white"
+        self._win.draw_line(line, color)
+
+        # top wall
+        line = Line(Point(self._x1, self._y1), Point(self._x2, self._y1))
+        color = "black" if self.has_top_wall else "white"
+        self._win.draw_line(line, color)
+
+        # bottom wall
+        line = Line(Point(self._x1, self._y2), Point(self._x2, self._y2))
+        color = "black" if self.has_bottom_wall else "white"
+        self._win.draw_line(line, color)
 
     def draw_move(self, to_cell, undo=False):
         self_center_x = (self._x1 + self._x2) / 2
@@ -104,23 +112,37 @@ class Maze:
         for ci in range(self._num_cols):
             new_column = []
             x_offset = self._x1 + self._cell_size_x * ci
+
             for ri in range(self._num_rows):
                 y_offset = self._y1 + self._cell_size_y * ri
                 top_left = Point(x_offset, y_offset)
                 bottom_right = Point(x_offset + self._cell_size_x, y_offset + self._cell_size_y)
                 new_cell = Cell(top_left, bottom_right, self._win)
                 new_column.append(new_cell)
-                new_cell.draw()
-                #self._draw_cell(ci, ri)
+
             self._cells.append(new_column)
+
+        for ci in range(self._num_cols):
+            for ri in range(self._num_rows):
+                self._draw_cell(ci, ri)
+
+        self._break_entrance_and_exit()
         self._animate()
 
     def _draw_cell(self, i, j):
-        # Whats the point of this if we already have Cell.draw()???
-        pass
+        self._cells[i][j].draw()
 
     def _animate(self):
         if not self._win:
             return
         self._win.redraw()
         sleep(0.05)
+
+    def _break_entrance_and_exit(self):
+        top_left_cell = self._cells[0][0]
+        top_left_cell.has_top_wall = False
+        top_left_cell.draw()
+
+        bottom_right_cell = self._cells[self._num_cols - 1][self._num_rows - 1]
+        bottom_right_cell.has_bottom_wall = False
+        bottom_right_cell.draw()
