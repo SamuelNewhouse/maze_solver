@@ -1,4 +1,5 @@
 from tkinter import Tk, BOTH, Canvas
+from time import sleep
 
 class Window:
     def __init__(self, width, height):
@@ -76,21 +77,55 @@ class Cell:
         else:
             self._win.draw_line(line,"red")
 
+class Maze:
+    def __init__(
+            self,
+            x1,
+            y1,
+            num_rows,
+            num_cols,
+            cell_size_x,
+            cell_size_y,
+            win,
+        ):
+        self._x1 = x1
+        self._y1 = y1
+        self._num_rows = num_rows
+        self._num_cols = num_cols
+        self._cell_size_x = cell_size_x
+        self._cell_size_y = cell_size_y
+        self._win = win
+        self._create_cells()
+
+    def _create_cells(self):
+        self._cells = []
+        for ci in range(self._num_cols):
+            new_column = []
+            x_offset = self._x1 + self._cell_size_x * ci
+            for ri in range(self._num_rows):
+                y_offset = self._y1 + self._cell_size_y * ri
+                top_left = Point(x_offset, y_offset)
+                bottom_right = Point(x_offset + self._cell_size_x, y_offset + self._cell_size_y)
+                new_cell = Cell(top_left, bottom_right, self._win)
+                new_column.append(new_cell)
+                self._cells.append(new_column)
+                new_cell.draw()
+                self._draw_cell(ci, ri)
+        self._animate()
+
+    def _draw_cell(self, i, j):
+        # Whats the point of this if we already have Cell.draw()???
+        pass
+
+    def _animate(self):
+        self._win.redraw()
+        sleep(0.05)
+
+
+
 def main():
     win = Window(800, 600)
-    p1 = Point(20,20)
-    p2 = Point(40,40)
-    p3 = Point(40,20)
-    p4 = Point(60,40)
-
-    c1 = Cell(p1, p2, win)
-    c2 = Cell(p3, p4, win)
-    c1.has_bottom_wall = False
-    c2.has_top_wall = False
-    c1.draw()
-    c2.draw()
-
-    c1.draw_move(c2)
+    mz = Maze(5,5,5,5,20,20,win)
 
     win.wait_for_close()
 
