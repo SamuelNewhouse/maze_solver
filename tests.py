@@ -18,5 +18,9 @@ class Tests(unittest.TestCase):
     self.assertFalse(m1._cells[0][0].has_top_wall)
     self.assertFalse(m1._cells[num_cols - 1][num_rows - 1].has_bottom_wall)
 
+    for columns in m1._cells:
+      for cell in columns:
+        self.assertEqual(cell._visited, False)
+
 if __name__ == "__main__":
 	unittest.main()

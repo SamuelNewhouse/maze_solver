@@ -137,6 +137,7 @@ class Maze:
 
         self._break_entrance_and_exit()
         self._break_walls_r(0,0)
+        self._reset_cells_visited()
         self._animate()
 
     def _draw_cell(self, i, j):
@@ -186,3 +187,8 @@ class Maze:
                 self._break_walls_r(i, j + 1)
 
         self._draw_cell(i, j)
+
+    def _reset_cells_visited(self):
+        for columns in self._cells:
+            for cell in columns:
+                cell._visited = False
